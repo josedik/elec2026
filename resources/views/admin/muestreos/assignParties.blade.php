@@ -3,7 +3,7 @@
 @section('title', 'Parties Assignment')
 
 @section('content_header')
-    <h1>Partidos del distrito: {{ $district->name }}</h1>
+    <h1>Political parties by district: {{ $district->name }}</h1>
 @stop
 
 @section('content')
