@@ -40,8 +40,7 @@
             @endphp
 
             {{-- Minimal example / fill data using the component slot --}}
-            <x-adminlte-datatable id="table1" :heads="$heads" head-theme="dark" :config="$config" striped hoverable
-                bordered compressed>
+            <x-adminlte-datatable id="table1" :heads="$heads" head-theme="dark" :config="$config" striped hoverable bordered compressed with-buttons>
                 @foreach ($schools as $school)
                     <tr>
                         <td>{{ $school->code }}</td>
@@ -71,8 +70,9 @@
         </div>
     </div>
 @stop
+
 @section('plugins.Datatables', true)
-@section('plugins.DatatablesPlugin', true)
+@section('plugins.DatatablesPlugins', true)
 @section('css')
     {{-- Add here extra stylesheets --}}
     {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
