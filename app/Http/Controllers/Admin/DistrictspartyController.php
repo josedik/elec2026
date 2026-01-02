@@ -83,6 +83,7 @@ class DistrictspartyController extends Controller
         return view('admin.districtsparty.viewparties', compact('district', 'parties'));
 
     }
+    
 
     /**
      * Show the form for editing the specified resource.
