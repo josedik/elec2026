@@ -71,8 +71,6 @@ class ReportsController extends Controller
             )
                 ->orderBy('total', 'desc')
                 ->whereIn('mesa_id', $mesas->pluck('id'))
-                ->where('party_id', '!=', 75) // Excluir votos nulos
-                ->where('party_id', '!=', 76) // Excluir votos en blanco
                 ->groupBy('party_id')
                 ->with('party')
                 ->get();
@@ -100,16 +98,19 @@ class ReportsController extends Controller
                         ->where('district_id', $district->id);
                 })
                 ->orderBy('total', 'desc')
-                ->where('party_id', '!=', 75) // Excluir votos nulos
-                ->where('party_id', '!=', 76) // Excluir votos en blanco
                 ->groupBy('party_id')
                 ->with('party')
                 ->orderBy('total', 'desc')
                 ->get();
             $totalVotes = $results->sum('total');
             $votes = [];
+            $votosValidos= $totalVotes;
             foreach ($results as $result) {
+                if($result->party_id==75 || $result->party_id==76){
+                    continue;
+                }
                 $votes[$result->party_id] = $result->total;
+                
             }
             $seatAllocation = $this->dhondt($votes, $district->escanios);
             foreach ($results as $result) {

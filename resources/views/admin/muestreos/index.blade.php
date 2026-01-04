@@ -3,8 +3,9 @@
 @section('title', 'Districts')
 
 @section('content_header')
-    <h1>List of Districts</h1>
-    <small>Click on the name to print the electoral survey sheet by district.</small>
+    <div class="alert alert-info">
+        <h1>Print survey sheet by district</h1>
+    </div>
 @stop
 
 @section('content')
@@ -40,31 +41,25 @@
                 @foreach ($districts as $district)
                     <tr>
                         <td>{{ $district->code }}</td>
-                        <td><a href="{{ route('admin.muestreos.show', ['district_id'=>$district->id,'samples'=>$district->samples]) }}" title="View Report">
-                            {{ $district->name }}        
-                                </a>
-                            
-                        </td>
+                        <td>{{ $district->name }}</td>
                         <td>{{ $district->province->name }}</td>
                         <td>{{ $district->population }}</td>
                         <td>{{ $district->area }}</td>
                         <td>{{ $district->samples }}</td>
-                        <td>{{ $district->samplesProvince }}</td>
-                        {{-- <td>
-                            
-                            @can('admin.muestreos.edit')
-                                <a href="{{ route('admin.muestreos.edit', $district->id) }}"
-                                    class="btn btn-xs btn-default text-primary mx-1 shadow" title="Create Report">
-                                    <i class="fa fa-lg fa-fw fa-link"></i>
-                                </a>
+                        <td>
+                            @can('admin.muestreos.show')
+                            <a href="{{ route('admin.muestreos.show', ['district_id' => $district->id, 'samples' => $district->samples]) }}"
+                                class="btn btn-xs btn-default text-info mx-1 shadow" title="Print Surveys">
+                                <i class="fa fa-lg fa-fw fa-print"></i>
+                            </a>
+                            @else('admin.muestreos.show')
+                                <button class="btn btn-xs btn-default text-danger mx-1 shadow" title="You can not print"><i class="fa fa-lg fa-fw fa-print"></i></button>
+
                             @endcan
-                        </td> --}}
+                        </td>
                     </tr>
                 @endforeach
             </x-adminlte-datatable>
-
-            {{-- Compressed with style options / fill data using the plugin config --}}
-
         </div>
     </div>
 @stop
