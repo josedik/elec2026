@@ -3,8 +3,9 @@
 @section('title', 'Districts')
 
 @section('content_header')
-    <h1>Votes by Districts</h1>
-    <small>Click on the name to see the voting results</small>
+<div class="alert alert-info">
+    <h1>See vote results by district</h1>
+    </div>
 @stop
 
 @section('content')
@@ -40,23 +41,16 @@
                 @foreach ($districts as $district)
                     <tr>
                         <td>{{ $district->code }}</td>
-                        <td><a href="{{ route('admin.reports.show', $district->id) }}" title="View Report">
-                            {{ $district->name }}        
-                                </a>
-                            
-                        </td>
+                        <td>{{ $district->name }}</td>
                         <td>{{ $district->province->name }}</td>
                         <td>{{ $district->population }}</td>
                         <td>{{ $district->area }}</td>
                         <td>{{ $district->escanios }}</td>
-                        <td>
+                        <td align="center">
                             @can('admin.reports.show')
-                                
-                            @endcan
-                            @can('admin.reports.edit')
-                                <a href="{{ route('admin.reports.edit', $district->id) }}"
-                                    class="btn btn-xs btn-default text-primary mx-1 shadow" title="Create Report">
-                                    <i class="fa fa-lg fa-fw fa-link"></i>
+                                <a href="{{ route('admin.reports.show', $district->id) }}"
+                                    class="btn btn-xs btn-default text-primary mx-1 shadow" title="View Results">
+                                    <i class="fa fa-lg fa-fw fa-eye"></i>
                                 </a>
                             @endcan
                         </td>
