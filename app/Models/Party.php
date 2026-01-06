@@ -16,6 +16,7 @@ class Party extends Model
         'name',
         'acronym',
         'voter_id',
+        'voters',
         'logo_path',
         'active',
     ];

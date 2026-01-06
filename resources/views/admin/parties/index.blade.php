@@ -27,6 +27,7 @@
                     'Acronym',
                     'Principal',
                     'Active',
+                    'Affiliates',
                     ['label'=>'Logo', 'width'=>11],
                     ['label' => 'Actions', 'no-export' => true, 'width' => 14],
                 ];
@@ -53,6 +54,7 @@
                         <td>{{ $party->acronym }}</td>
                         <td>{{ $party->voter->name ?? ''}}  {{  $party->voter->surname ?? '' }}</td>
                         <td>{{ $party->active ? 'Yes' : 'No' }}</td>
+                        <td>{{ $party->voters ?? '' }}</td>
 
                         <td><img src="{{ asset('storage/' . $party->logo_path) }}" alt="logo_path" class="h-6 flex-shrink-0" width="36px"></td>
                         <td>

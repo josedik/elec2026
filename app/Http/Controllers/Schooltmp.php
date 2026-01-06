@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Department;
 use App\Models\District;
 use App\Models\Mesa;
+use App\Models\Party;
 use App\Models\Province;
 use Illuminate\Http\Request;
 use App\Models\School;
@@ -13,6 +14,22 @@ use Illuminate\Support\Facades\DB;
 
 class Schooltmp extends Controller
 {
+    public function obtenerIniciales(string $nombreCompleto)
+    {
+        // Convierte a mayúsculas para consistencia y divide por espacios
+        $partes = explode(' ', strtoupper($nombreCompleto));
+        $iniciales = '';
+
+        // Itera sobre cada parte del nombre
+        foreach ($partes as $parte) {
+            // Añade la primera letra de cada parte si la parte no está vacía
+            if (strlen($parte) > 0) {
+                $iniciales .= substr($parte, 0, 1); // substr($parte, 0, 1) obtiene el primer carácter
+            }
+        }
+        return $iniciales;
+    }
+
     public function districts()
     {
         // function for import data of districts.
@@ -65,14 +82,14 @@ class Schooltmp extends Controller
             while (($row = fgetcsv($handle, 1000, $delimiter)) !== false) {
                 $code = str_pad($row[0], 5, '0', STR_PAD_LEFT);
                 $name = $row[1];
-                $dep=$row[2];
-                $pro=$row[3];
-                $dis=$row[4];
+                $dep = $row[2];
+                $pro = $row[3];
+                $dis = $row[4];
                 $tables = $row[5];
-                $voters=$row[6];
-                $district = District::where('name',$dis)->first();
+                $voters = $row[6];
+                $district = District::where('name', $dis)->first();
                 $district_id = $district->id ?? 2;
-                
+
                 $schoolNew = School::create([
                     'code' => $code,
                     'name' => $name,
@@ -102,7 +119,7 @@ class Schooltmp extends Controller
                 $code = str_pad(trim($row[1]), 6, '0', STR_PAD_LEFT);
                 $electors = $row[2];
                 $codeDis = str_pad(trim($row[3]), 6, '0', STR_PAD_LEFT);
-                $district = District::where('code', '=',$codeDis)->first();
+                $district = District::where('code', '=', $codeDis)->first();
                 if ($district !== null) {
                     $tableNew = Mesa::create([
                         'code' => $code,
@@ -208,4 +225,36 @@ class Schooltmp extends Controller
             return "Importación completada";
         }
     }
+
+    public function parties()
+    {
+        // function for import data of districts.
+        $filename = public_path('storage/partidos.csv'); // Ruta al archivo CSV
+        $tableName = 'parties'; // Nombre de la tabla donde se importarán los datos
+        $delimiter = ';'; // Delimitador del archivo CSV
+        $header = null; // Variable para almacenar los nombres de las columnas
+        $data = []; // Array para almacenar los datos a insertar
+        if (($handle = fopen($filename, 'r')) !== false) {
+            while (($row = fgetcsv($handle, 1000, $delimiter)) !== false) {
+                $code = str_pad($row[0], 4, '0', STR_PAD_LEFT);
+                $nameParty = $row[1];
+                $voters = $row[2];
+                $acronym = $this->obtenerIniciales($nameParty);
+                $newParty = Party::create([
+                    'name' => $nameParty,
+                    'code' => $code,
+                    'voters' => $voters,
+                    'acronym' => $acronym,
+                ]);
+            }
+
+        }
+        fclose($handle);
+        // Insertar los datos en la tabla
+
+        //DB::table($tableName)->insert($data);
+        return "Importación completada";
+    }
+
+
 }

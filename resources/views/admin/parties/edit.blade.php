@@ -70,6 +70,15 @@
                             <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
                         @enderror
                     </div>
+                    <div class="form-group col-sm-12 col-md-4">
+                        <label for="code">Affiliates</label>
+                        <input type="numeric" min="0" name="voters" id="voters"
+                            class="form-control @error('voters') is-invalid @enderror" value="{{ old('voters') ?? $party->voters }}"
+                            maxlength="4" >
+                        @error('voters')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
                 </div>
 
                 <div class="form-row">

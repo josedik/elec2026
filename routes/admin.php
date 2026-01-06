@@ -18,7 +18,7 @@ use App\Http\Controllers\Schooltmp;
 use Illuminate\Support\Facades\Route;
 
 Route::get('', action: [HomeController::class, 'index']);
-//Route::get('dist', action: [Schooltmp::class, 'mesas']);
+//Route::get('dist', action: [Schooltmp::class, 'parties']);
 //Route::get('districts/show', action: [DistrictController::class, 'show'])->name('admin.districts.show');
 Route::get('mesas/getMesas', action: [MesaController::class, 'getMesas'])->name('mesas.getMesas');
 

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('acronym',10)->unique();
             $table->unsignedBigInteger('voter_id')->nullable();
             $table->foreign('voter_id')->references('id')->on('voters')->onDelete('set null');
+            $table->integer('voters');
             $table->boolean('active')->default(true);
             $table->string('logo_path', 255)->nullable()->default('logo.png');
             $table->timestamps();
