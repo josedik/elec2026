@@ -3,8 +3,8 @@
 @section('title', 'Districts')
 
 @section('content_header')
-<div class="alert alert-info">
-    <h1>See vote results by district</h1>
+    <div class="alert alert-info">
+        <h1>See vote results by district</h1>
     </div>
 @stop
 
@@ -18,8 +18,8 @@
                     ['label' => 'Province', 'width' => 30],
                     ['label' => 'Population', 'width' => 6],
                     ['label' => 'Area', 'width' => 6],
-                    ['label' => 'Regidores', 'width' => 6],
-                    ['label' => 'Actions', 'no-export', 'width' => 14],
+                    ['label' => 'Governors', 'width' => 6],
+                    ['label' => 'Actions', 'no-export', 'width' => 20],
                 ];
 
                 $btnEdit = '<button class="btn btn-xs btn-default text-primary mx-1 shadow" title="Edit">
@@ -43,14 +43,18 @@
                         <td>{{ $district->code }}</td>
                         <td>{{ $district->name }}</td>
                         <td>{{ $district->province->name }}</td>
-                        <td>{{ $district->population }}</td>
-                        <td>{{ $district->area }}</td>
-                        <td>{{ $district->escanios }}</td>
+                        <td class="text text-right">{{ $district->population }}</td>
+                        <td class="text text-right">{{ $district->area }}</td>
+                        <td class="text text-right">{{ $district->escanios }}</td>
                         <td align="center">
                             @can('admin.reports.show')
                                 <a href="{{ route('admin.reports.show', $district->id) }}"
                                     class="btn btn-xs btn-default text-primary mx-1 shadow" title="View Results">
                                     <i class="fa fa-lg fa-fw fa-eye"></i>
+                                </a>
+                                <a href="{{ route('admin.reports.edit', $district->id) }}"
+                                    class="btn btn-xs btn-default text-info mx-1 shadow" title="View Governors">
+                                    <i class="fa fa-lg fa-fw fa-thumbs-up" aria-hidden="true"></i>
                                 </a>
                             @endcan
                         </td>

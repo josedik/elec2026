@@ -55,14 +55,14 @@
                 <x-adminlte-datatable id="table1" :heads="$heads" head-theme="dark" :config="$config" striped hoverable
                     bordered compressed with-buttons>
                     @foreach ($results as $result)
-                        @if ($result->party->id == 75)
+                        @if ($result->party->code == env('BLANK_VOTES_CODE'))
                             @php
                                 $blancos += $result->total;
                                 $votosValidos = $votosValidos - $blancos;
                             @endphp
                             @continue
                         @endif
-                        @if ($result->party->id == 76)
+                        @if ($result->party->code == env('INVALID_VOTES_CODE'))
                             @php
                                 $nulos += $result->total;
                                 $votosValidos = $votosValidos - $nulos;
@@ -71,10 +71,10 @@
                         @endif
                     @endforeach
                     @foreach ($results as $total)
-                        @if ($total->party->id == 75)
+                        @if ($total->party->code == env('BLANK_VOTES_CODE'))
                             @continue
                         @endif
-                        @if ($total->party->id == 76)
+                        @if ($total->party->code == env('INVALID_VOTES_CODE'))
                             @continue
                         @endif
                         @if ($total->allocated_seats > 0)
@@ -97,7 +97,7 @@
                     <tfoot>
                         <tr>
                             <td class="text-right">{{ $order++ }}</td>
-                            <td>Blank votes</td>
+                            <td>BLANK</td>
                             <td class="text-right">{{ $blancos ?? 0 }}</td>
                             <td></td>
                             <td class="text-right"></td>
@@ -105,7 +105,7 @@
                         </tr>
                         <tr>
                             <td class="text-right">{{ $order++ }}</td>
-                            <td>Null votes</td>
+                            <td>INVALID</td>
                             <td class="text-right">{{ $nulos ?? 0 }}</td>
                             <td></td>
                             <td class="text-right"></td>

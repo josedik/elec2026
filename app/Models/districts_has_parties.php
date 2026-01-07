@@ -15,4 +15,15 @@ class districts_has_parties extends Model
             'votes',
         ];
 
+        public function voters()
+    {
+        return $this->belongsTo(Voter::class, 'voter_id');
+    }
+
+    public function district_has_parties()
+    {
+        return $this->belongsTo(districts_has_parties::class, 'district_has_parties_id');
+    }
+
+
 }

@@ -75,7 +75,8 @@ class MuestreoController extends Controller
         $district = District::findOrFail($id);
         // select parties where district_id = $id for printing form to select parties
         $parties = $district->parties;
-        return view('admin.muestreos.show', compact('district', 'parties', 'samples'));
+        $partidos=$parties->count();
+        return view('admin.muestreos.show', compact('district', 'parties', 'samples','partidos'));
     }
 
     /**
@@ -137,6 +138,14 @@ class MuestreoController extends Controller
         $pdf->SetFont('Arial', '', 8);
         $totalparties = 0;
         $orden = 1;
+        if ($district->parties->count()==0) {
+            $district->parties = collect(range(1, 10))->map(function($i) {
+                return (object)[
+                    'order'=>$i,
+                    'name' => 'party_' . str_pad($i, 2, '0', STR_PAD_LEFT),
+                    'votes'=>''];
+            });
+        }
         foreach ($district->parties as $row) {
 
             $pdf->Cell($w[0], $h, $orden, 1, 0, 'R');

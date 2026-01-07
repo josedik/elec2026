@@ -23,14 +23,12 @@
                         </div>
                     @endforeach
                 @else
-                    <div class="form-check">
-                        <label class="form-check-label alert alert-warning" for="no-parties">
+                    <div class="form-check-label alert alert-warning">
+                        <label for="no-parties">
                             No political parties assigned to this district.
                         </label>
                     </div>
-
                 @endif
-
                 <div class="mt-3">
                     @can('admin.districtsparty.edit')
                         <label for="escanios">Number of Seats:</label>

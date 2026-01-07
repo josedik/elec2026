@@ -123,4 +123,19 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+/*
+    |--------------------------------------------------------------------------
+    | Maintenance id votes blank and invalid
+    |--------------------------------------------------------------------------
+    |
+    | These configuration options determine the driver used to determine and
+    | manage Laravel's "maintenance mode" status. The "cache" driver will
+    | allow maintenance mode to be controlled across multiple machines.
+    |
+    | Supported drivers: "file", "cache"
+    |
+    */ 
+    'blank' => env('BLANK_VOTES_CODE', '9998'),
+    'invalid' => env('INVALID_VOTES_CODE', '9999'),
+
 ];

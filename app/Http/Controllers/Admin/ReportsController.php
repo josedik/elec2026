@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\District;
+use App\Models\districts_has_parties;
 use App\Models\Mesa;
 use App\Models\Mesa_has_parties;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rules\In;
 use Ramsey\Uuid\Type\Integer;
@@ -104,13 +106,13 @@ class ReportsController extends Controller
                 ->get();
             $totalVotes = $results->sum('total');
             $votes = [];
-            $votosValidos= $totalVotes;
+            $votosValidos = $totalVotes;
             foreach ($results as $result) {
-                if($result->party_id==75 || $result->party_id==76){
+                if ($result->party_code == env('BLANK_VOTES_CODE') || $result->party_code == env('INVALID_VOTES_CODE')) {
                     continue;
                 }
                 $votes[$result->party_id] = $result->total;
-                
+
             }
             $seatAllocation = $this->dhondt($votes, $district->escanios);
             foreach ($results as $result) {
@@ -125,8 +127,9 @@ class ReportsController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -146,10 +149,10 @@ class ReportsController extends Controller
 
     public function dhondt($votes, $seats)
     {
-        if(empty($votes) || $seats <= 0) {
+        if (empty($votes) || $seats <= 0) {
             return [];
         }
-        
+
         $parties = [];
         foreach ($votes as $party => $voteCount) {
             $parties[$party] = [];
@@ -178,5 +181,5 @@ class ReportsController extends Controller
         return $seatCount;
     }
 
-   
+
 }

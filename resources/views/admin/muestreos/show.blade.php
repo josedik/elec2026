@@ -3,10 +3,26 @@
 @section('title', 'List of Parties by District')
 
 @section('content_header')
+@if ($partidos==0)
+<div class="alert alert-danger" role="alert">
+    <h1 class="text text-center">There are no parties for the district: {{ $district->name }}</h1>
+    <small>Print only one copy for each collector. A personal value is printed for each one.
+    <p>A form will be issued with 10 parties with the name Party_xx.</p></small>
+    @php
+    $district->parties = collect(range(1, 10))->map(function($i) {
+                return (object)[
+                    'id'=>$i,
+                    'name' => 'party_' . str_pad($i, 2, '0', STR_PAD_LEFT),
+                    'votes'=>''];
+            });
+    @endphp
+@else
 <div class="alert alert-info" role="alert">
     <h1 class="text text-center">Parties of District: {{ $district->name }}</h1>
-    <small>print only one copy for each collector. A personal value is printed for each one.</small>
-</div>
+    <small>Print only one copy for each collector. A personal value is printed for each one.</small>
+@endif
+</div>    
+
     
 @stop
 
@@ -52,10 +68,11 @@
                 <input type="hidden" name="district_id" value="{{ $district->id }}">
                 <input type="hidden" name="samples" value="{{ $samples }}">
                 <div class="mt-4">
-                    @if ($order>1)
+                    @if (true)
                     <button type="submit" class="btn btn-primary ml-2">
                         <i class="fa fa-print"></i> Print Survey Sheet
                     </button>
+
                     @endif
                     <a href="{{ route('admin.muestreos.index') }}" class="btn btn-secondary ml-2">
                         <i class="fa fa-arrow-left"></i> Back

@@ -236,13 +236,14 @@ class Schooltmp extends Controller
         $data = []; // Array para almacenar los datos a insertar
         if (($handle = fopen($filename, 'r')) !== false) {
             while (($row = fgetcsv($handle, 1000, $delimiter)) !== false) {
-                $code = str_pad($row[0], 4, '0', STR_PAD_LEFT);
+                $code=trim($row[0]);
+                $code = str_pad($code, 4, '0', STR_PAD_LEFT);
                 $nameParty = $row[1];
                 $voters = $row[2];
                 $acronym = $this->obtenerIniciales($nameParty);
                 $newParty = Party::create([
-                    'name' => $nameParty,
                     'code' => $code,
+                    'name' => $nameParty,
                     'voters' => $voters,
                     'acronym' => $acronym,
                 ]);
