@@ -354,6 +354,12 @@ return [
                     'icon' => 'fas fa-map-marker-alt',
                     'can' => 'admin.districtsparty.index',
                 ],
+                 [
+                    'text' => 'Register Votes/Tables',
+                    'route' => 'admin.mesas.index',
+                    'icon' => 'fas fa-user-graduate',
+                    'can' => 'admin.districtsparty.show',
+                ],
                 [
                     'text' => 'Schools',
                     'route' => 'admin.schools.index',
@@ -361,16 +367,16 @@ return [
                     'can' => 'admin.schools.index',
                 ],
                 [
-                    'text' => 'Register Votes/Tables',
-                    'route' => 'admin.mesas.index',
-                    'icon' => 'fas fa-user-graduate',
-                    'can' => 'admin.districtsparty.show',
-                ],
-                [
                     'text' => 'Voters',
                     'route' => 'admin.voters.index',
                     'icon' => 'fas fa-users',
                     'can' => 'admin.voters.index',
+                ],
+                [
+                    'text' => 'Candidates',
+                    'route' => 'admin.candidates.index',
+                    'icon' => 'fas fa-users',
+                    'can' => 'admin.candidates.index',
                 ],
                 [
                     'text' => 'Political Parties',

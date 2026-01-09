@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AsignarController;
+use App\Http\Controllers\Admin\CandidateController;
 use App\Http\Controllers\Admin\DepartmentController;
 use App\Http\Controllers\Admin\DistrictController;
 use App\Http\Controllers\Admin\DistrictspartyController;
@@ -33,6 +34,7 @@ Route::resource('schools', SchoolController::class);
 Route::resource('parties', PartyController::class);
 Route::resource('mesas',MesaController::class);
 Route::resource('voters', VoterController::class);
+Route::resource('candidates', CandidateController::class);
 Route::resource('districtsparty', DistrictspartyController::class);
 Route::resource('muestreos', MuestreoController::class);
 
