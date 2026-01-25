@@ -547,7 +547,7 @@
                 <script>
                     setTimeout(function() {
                         window.history.back();
-                    }, 3000);
+                    }, 5000);
                 </script>
             </div>
         </div>

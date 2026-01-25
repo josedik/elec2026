@@ -55,9 +55,12 @@
                         <td> {{ $voter->mesa->code ?? '' }} </td>
                         <td>
                             @if ($voter->active)
-                                <span class="bg-success text-white px-2 py-1 rounded">Activo</span>
+                                <span class="bg-success text-white px-2 py-1 rounded"><i class="fa fa-check"
+                                        aria-hidden="true"></i>
+                                </span>
                             @else
-                                <span class="bg-secondary text-white px-2 py-1 rounded">Inactivo</span>
+                                <span class="bg-danger text-white px-2 py-1 rounded"><i class="fa fa-window-close" aria-hidden="true"></i>
+                                </span>
                             @endif
                         </td>
 

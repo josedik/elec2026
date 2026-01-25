@@ -16,7 +16,18 @@
                 @csrf
 
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="dni">DNI</label>
+                            <input id="dni" name="dni" type="text"
+                                class="form-control @error('dni') is-invalid @enderror" value="{{ old('dni') }}"
+                                required>
+                            @error('dni')
+                                <span class="text-danger small">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label for="name">Name</label>
                             <input id="name" name="name" type="text"
@@ -28,7 +39,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label for="surname">Surname</label>
                             <input id="surname" name="surname" type="text"
@@ -42,18 +53,6 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="dni">DNI</label>
-                            <input id="dni" name="dni" type="text"
-                                class="form-control @error('dni') is-invalid @enderror" value="{{ old('dni') }}"
-                                required>
-                            @error('dni')
-                                <span class="text-danger small">{{ $message }}</span>
-                            @enderror
-                        </div>
-                    </div>
-
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="date_of_birth">Date of Birth</label>
@@ -84,20 +83,22 @@
                             @enderror
                         </div>
                     </div>
-                </div>
 
-                <div class="form-group form-check">
-                    <input type="hidden" name="active" value="0">
-                    <input id="active" name="active" type="checkbox" class="form-check-input" value="1"
-                        {{ old('active', 0) ? 'checked' : '' }}>
-                    <label class="form-check-label" for="active">Active</label>
+                    <div class="col-md-4 form-group form-check mt-auto">
+                        <input type="hidden" name="active" value="0">
+                        <input id="active" name="active" type="checkbox" class="form-check-input" value="1"
+                            {{ old('active', 0) ? 'checked' : '' }}>
+                        <label class="form-check-label" for="active"><strong>Active</strong></label>
+                    </div>
                 </div>
-
                 <div class="d-flex justify-content-between">
                     <a href="{{ route('admin.voters.index') }}" class="btn btn-secondary">Cancel</a>
                     <button type="submit" class="btn btn-primary">Create Voter</button>
+                    <div></div>
+                    <div></div>
                 </div>
             </form>
+
         </div>
     </div>
 @stop

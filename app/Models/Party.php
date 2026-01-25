@@ -53,5 +53,13 @@ class Party extends Model
                     ->withTimestamps();
     }
 
+    public function voters() {
+        // Define la relación muchos a muchos
+        return $this->belongsToMany(Voter::class, 'party_has_voters')
+        ->withPivot('order','district_id')
+        ->withTimestamps();
+
+    }
+
     
 }

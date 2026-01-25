@@ -20,56 +20,71 @@
             <div class="card card-default">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-4 mb-3">
+                            <label for="dni" class="form-label">DNI</label>
+                            <input type="text" id="dni" name="dni" class="form-control"
+                                value="{{ old('dni', $voter->dni) }}" required>
+                            @error('dni')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+                        <div class="col-md-4 mb-3">
                             <label for="name" class="form-label">Name</label>
-                            <input type="text" id="name" name="name" class="form-control" value="{{ old('name', $voter->name) }}" required>
-                            @error('name') <small class="text-danger">{{ $message }}</small> @enderror
+                            <input type="text" id="name" name="name" class="form-control"
+                                value="{{ old('name', $voter->name) }}" required>
+                            @error('name')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
                         </div>
 
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-4 mb-3">
                             <label for="surname" class="form-label">Surname</label>
-                            <input type="text" id="surname" name="surname" class="form-control" value="{{ old('surname', $voter->surname) }}" required>
-                            @error('surname') <small class="text-danger">{{ $message }}</small> @enderror
+                            <input type="text" id="surname" name="surname" class="form-control"
+                                value="{{ old('surname', $voter->surname) }}" required>
+                            @error('surname')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label for="dni" class="form-label">DNI</label>
-                            <input type="text" id="dni" name="dni" class="form-control" value="{{ old('dni', $voter->dni) }}" required>
-                            @error('dni') <small class="text-danger">{{ $message }}</small> @enderror
-                        </div>
-
-                        <div class="col-md-4 mb-3">
                             <label for="date_of_birth" class="form-label">Date of Birth</label>
-                            <input type="date" id="date_of_birth" name="date_of_birth" class="form-control" value="{{ old('date_of_birth', $voter->date_of_birth) }}">
-                            @error('date_of_birth') <small class="text-danger">{{ $message }}</small> @enderror
+                            <input type="date" id="date_of_birth" name="date_of_birth" class="form-control"
+                                value="{{ old('date_of_birth', $voter->date_of_birth) }}">
+                            @error('date_of_birth')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
                         </div>
 
                         <div class="col-md-4 mb-3">
                             <label for="mesa_id" class="form-label">Mesa</label>
                             <select id="mesa_id" name="mesa_id" class="form-control">
                                 <option value="">-- Select Mesa --</option>
-                                @foreach($mesas as $mesa)
-                                    <option value="{{ $mesa->id }}" {{ (string)old('mesa_id', (string)$voter->mesa_id) === (string)$mesa->id ? 'selected' : '' }}>
-                                        {{ $mesa->code ?? 'Mesa '.$mesa->code }}
+                                @foreach ($mesas as $mesa)
+                                    <option value="{{ $mesa->id }}"
+                                        {{ (string) old('mesa_id', (string) $voter->mesa_id) === (string) $mesa->id ? 'selected' : '' }}>
+                                        {{ $mesa->code ?? 'Mesa ' . $mesa->code }}
                                     </option>
                                 @endforeach
                             </select>
-                            @error('mesa_id') <small class="text-danger">{{ $message }}</small> @enderror
+                            @error('mesa_id')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
                         </div>
-                    </div>
-
-                    <div class="row align-items-center">
-                        <div class="col-md-6 mb-3">
-                            <div class="form-check">
-                                <input type="hidden" name="active" value="0">
-                                <input class="form-check-input" type="checkbox" id="active" name="active" value="1" {{ old('active', $voter->active) ? 'checked' : '' }}>
-                                <label class="form-check-label" for="active">Active</label>
+                        <div class="row align-items-center">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check mt-4">
+                                    <input type="hidden" name="active" value="0">
+                                    <input class="form-check-input" type="checkbox" id="active" name="active"
+                                        value="1" {{ old('active', $voter->active) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="active">Active</label>
+                                </div>
+                                @error('active')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
-                            @error('active') <small class="text-danger">{{ $message }}</small> @enderror
                         </div>
-                        
                     </div>
                 </div>
 

@@ -9,6 +9,7 @@ use App\Models\Party;
 use App\Models\Province;
 use Illuminate\Http\Request;
 use App\Models\School;
+use App\Models\Voter;
 use Illuminate\Support\Facades\DB;
 
 
@@ -257,5 +258,40 @@ class Schooltmp extends Controller
         return "Importación completada";
     }
 
+public function voters()
+    {
+        // function for import data of districts.
+        $filename = public_path('storage/votantesPP.csv'); // Ruta al archivo CSV
+        $tableName = 'voters'; // Nombre de la tabla donde se importarán los datos
+        $delimiter = ';'; // Delimitador del archivo CSV
+        $header = null; // Variable para almacenar los nombres de las columnas
+        $data = []; // Array para almacenar los datos a insertar
+        if (($handle = fopen($filename, 'r')) !== false) {
+            while (($row = fgetcsv($handle, 1000, $delimiter)) !== false) {
+                $dni = trim($row[1]);
+                $name = $row[2];
+                $partes = explode(' ', $name);
+                $nombre = array_shift($partes); // Obtiene "Juan"
+                $segundoNombre = array_shift($partes); // Obtiene "Manuel"
+                $apellidos = implode(" ", $partes); // Une el resto: "Perez Garcia"
+                $name = $nombre . ' ' . $segundoNombre;
+                $surname = $apellidos;
+                $newVoter = Voter::create([
+                    'dni' => $dni,
+                    'name' => $name,
+                    'surname' => $surname,
+                    'district_id' => 1,
+                    'mesa_id' => 1,
+                    'date_of_birth' => rand(1950, 2005) . '-01-01',
+                ]);
+            }
+
+        }
+        fclose($handle);
+        // Insertar los datos en la tabla
+
+        //DB::table($tableName)->insert($data);
+        return "Importación completada";
+    }
 
 }

@@ -34,14 +34,41 @@ class Voter extends Model
         );
     }
 
-    public function parties(){
+    public function parties()
+    {
 
         return $this->hasMany(Party::class);
     }
 
-     public function mesa(){
+    public function mesa()
+    {
 
         return $this->belongsTo(Mesa::class);
     }
+
+    //Relacionar con candidates
+    public function candidate()
+    {
+        return $this->hasOne(Candidate::class);
+    }
+
+    //Relacionar con votes
+    public function votes()
+    {
+        return $this->hasMany(Voter::class);
+    }
+
+    //Relacionar con users
+    public function user()
+    {
+        return $this->hasOne(User::class);
+    }
+
+    //Buscar por dni
+    public static function searchByDni($dni)
+    {
+        return self::where('dni', $dni)->first();
+    }
    
+
 }

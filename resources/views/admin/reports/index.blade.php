@@ -14,7 +14,7 @@
             @php
                 $heads = [
                     ['label' => 'Code', 'width' => 8],
-                    ['label' => 'Name', 'width' => 35],
+                    ['label' => 'Name', 'width' => 30],
                     ['label' => 'Province', 'width' => 30],
                     ['label' => 'Population', 'width' => 6],
                     ['label' => 'Area', 'width' => 6],

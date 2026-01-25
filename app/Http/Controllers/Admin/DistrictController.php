@@ -82,6 +82,10 @@ class DistrictController extends Controller
             'name' => 'required|unique:districts,name',
             'code' => 'required|unique:districts,code'
         ]);
+        $escanios = $request->input('escanios');
+        if (empty($escanios) || $escanios==null) {
+            $request->merge(['escanios' => 5]);
+        }
         $district = new District($request->all());
         $province = Province::find($request->input('province_id'));
 
@@ -135,6 +139,10 @@ class DistrictController extends Controller
             'code' => 'required|unique:districts,code,' . $district->id,
             'name' => 'required|unique:districts,name, ' . $district->id,
         ]);
+        $escanios = $request->input('escanios');
+        if (empty($escanios) || $escanios==null) {
+            $request->merge(['escanios' => 5]);
+        }
         $district->update($request->all());
 
 

@@ -38,16 +38,16 @@ class VoterController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'dni' => 'required|string|max:50|unique:voters,dni',
             'name' => 'required|string|max:255',
             'surname' => 'required|string|max:255',
-            'dni' => 'required|string|max:50|unique:voters,dni',
             'date_of_birth' => 'required|date',
             'mesa_id' => 'required|exists:mesas,id',
             'active' => 'sometimes|boolean',
         ]);
 
-        $validated['active'] = $request->has('active') ? 1 : 0;
-
+        //$validated['active'] = $request->has('active') ? 1 : 0;
+        
         Voter::create($validated);
 
         return redirect()->route('admin.voters.index')->with('success', 'Voter created successfully.');
@@ -56,9 +56,14 @@ class VoterController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Voter $voter)
+    public function show(Request $request, Voter $voter)
     {
-        //
+        //mostrar datos de voter que coincida con el dni. 
+        //Utilizar scopeSearchDni metodo en el modelo Voter
+        $voter = Voter::searchDni($request->dni)->firstOrFail();
+        
+        return $voter;
+
     }
 
     /**
@@ -84,7 +89,8 @@ class VoterController extends Controller
             'active' => 'sometimes|boolean',
         ]);
 
-        $validated['active'] = $request->has('active') ? 1 : 0;
+        //$validated['active'] = $request->has('active') ? 1 : 0;
+
 
         $voter->update($validated);
 

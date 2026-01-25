@@ -9,7 +9,7 @@
 @section('content')
     <div class="card">
         <div class="card-body">
-            <form action="{{ route('admin.districtsparty.store', ['district_id' => $district->id]) }}" method="POST">
+            <form action="{{ route('admin.districtsparty.store', ['district_id' => $district['id']]) }}" method="POST">
                 @csrf
 
                 <div class="form-group">

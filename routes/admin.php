@@ -19,13 +19,23 @@ use App\Http\Controllers\Schooltmp;
 use Illuminate\Support\Facades\Route;
 
 Route::get('', action: [HomeController::class, 'index']);
-//Route::get('dist', action: [Schooltmp::class, 'parties']);
+//Route::get('dist', action: [Schooltmp::class, 'voters']);
 //Route::get('districts/show', action: [DistrictController::class, 'show'])->name('admin.districts.show');
 Route::get('mesas/getMesas', action: [MesaController::class, 'getMesas'])->name('mesas.getMesas');
+
+
+// route para buscar el nombre y apellido del votante por dni
+Route::get('/search-name', [CandidateController::class, 'searchName'])->name('candidates.searchName');
+
+//Route para imprimir lista de candidatos en pdf
+Route::get('candidates/printListPDF', action: [CandidateController::class, 'printListPDF'])->name('candidates.printListPDF');
 
 Route::post('mesas/storeVotes/{mesa}', action: [MesaController::class, 'storeVotes'])->name('mesas.storeVotes');
 
 Route::get('muestreos/show/{district_id}/{samples}', action: [MuestreoController::class, 'show'])->name('muestreos.show');
+
+Route::get('/obtener-registro/{id}/{party_id}', [CandidateController::class, 'obtenerRegistro'])->name('candidates.obtenerRegistro');
+
 
 Route::resource('departments', DepartmentController::class);
 Route::resource('provinces', ProvinceController::class);

@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Districts')
+@section('title', 'Assign parties by District')
 
 @section('content_header')
     <div class="row">

@@ -62,6 +62,15 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+                            <div class="form-group">
+                                <label for="escanios">Governors</label>
+                                <input id="escanios" name="escanios" type="numeric" maxlength="2"
+                                    class="form-control @error('escanios') is-invalid @enderror"
+                                    value="{{ old('escanios', $district->escanios) }}">
+                                @error('escanios')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
 
                         </div>
                     </div>
