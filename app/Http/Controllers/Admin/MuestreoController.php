@@ -120,6 +120,7 @@ class MuestreoController extends Controller
         $district = District::where('id', $district_id)->first();
         $province = Province::where('code', substr($district->code, 0, 4))->first();
         $pdf = new Fpdf();
+        $pdf->AliasNbPages(); // <-- IMPORTANTE
         $pdf->AddPage();
         $pdf->SetFont('Arial', 'B', 16);
         $pdf->Image('storage/images/logoStereo.png', 10, 8, 30, 30);
@@ -166,11 +167,9 @@ class MuestreoController extends Controller
 
         $pdf->Cell(50, $h, 'Political parties: ', 1, 0, 'R');
         $pdf->Cell(30, $h, $totalparties - 2, 1, 0, 'R');
-        $hoy = date('d/m/Y');
-        $pdf->SetFont('Arial', '', 12);
-        $pdf->Cell(0, 10, "Date: $hoy", 0, 1, 'R');
+        
         $pdf->Cell(0, 10, "Every " . $aleatorio . ' people', 0, 1, 'R');
-        $pdf->Ln(2);
+        
 
         return response($pdf->Output('S'), 200)
             ->header('Content-Type', 'application/pdf')

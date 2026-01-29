@@ -271,11 +271,18 @@ public function voters()
                 $dni = trim($row[1]);
                 $name = $row[2];
                 $partes = explode(' ', $name);
-                $nombre = array_shift($partes); // Obtiene "Juan"
-                $segundoNombre = array_shift($partes); // Obtiene "Manuel"
-                $apellidos = implode(" ", $partes); // Une el resto: "Perez Garcia"
-                $name = $nombre . ' ' . $segundoNombre;
-                $surname = $apellidos;
+                // Dos primeros son los apellidos
+                $surname = '';
+                if (count($partes) >= 2) {
+                    $surname = $partes[0] . ' ' . $partes[1];
+                } elseif (count($partes) == 1) {
+                    $surname = $partes[0];
+                }
+                $name = '';
+                for ($i = 2; $i < count($partes); $i++) {
+                    $name .= $partes[$i] . ' ';
+                }
+                $name = trim($name);
                 $newVoter = Voter::create([
                     'dni' => $dni,
                     'name' => $name,

@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\MesaController;
 use App\Http\Controllers\Admin\MuestreoController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\PartyController;
+use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProvinceController;
 use App\Http\Controllers\Admin\ReportsController;
 use App\Http\Controllers\Admin\RoleController;
@@ -19,7 +20,7 @@ use App\Http\Controllers\Schooltmp;
 use Illuminate\Support\Facades\Route;
 
 Route::get('', action: [HomeController::class, 'index']);
-//Route::get('dist', action: [Schooltmp::class, 'voters']);
+Route::get('dist', action: [Schooltmp::class, 'voters']);
 //Route::get('districts/show', action: [DistrictController::class, 'show'])->name('admin.districts.show');
 Route::get('mesas/getMesas', action: [MesaController::class, 'getMesas'])->name('mesas.getMesas');
 
@@ -52,4 +53,11 @@ Route::resource('roles', RoleController::class);
 Route::resource('permissions', PermissionController::class);
 Route::resource('users', AsignarController::class);
 Route::resource('reports', ReportsController::class);
+
+Route::get('/products', [ProductController::class, 'index'])->name('home');
+
+Route::post('/get-products', [ProductController::class, 'getProducts'])->name('products.getProducts');
+
+// Route para obtener la lista de votantes en formato JSON
+Route::get('/get-voters', [VoterController::class, 'getVoters'])->name('voters.getVoters');
 

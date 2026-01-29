@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'View list')
+@section('title', 'List of Candidates')
 
 @section('content_header')
     <div class="d-flex justify-content-between alert alert-info">
@@ -14,24 +14,22 @@
         </div>
         <div>District: <strong>{{ $district->name }}</strong></div>
         <div>Governors: <strong>{{ $district->escanios }}</strong></div>
-        <div>
-            <a href="{{ route('admin.candidates.show', ['candidate' => $id]) }}" class="btn btn-primary btn-sm"
+        <div class="d-flex justify-content-end">
+            <a href="{{ route('admin.candidates.show', ['candidate' => $id]) }}" class="btn btn-primary btn-sm mr-2"
                 title="Return previous">
-                <i class="fa fa-arrow-left mr-2"></i>Back
+                <i class="fa fa-arrow-left mt-2"></i>
             </a>
+            <button onclick="generarPDF()" class="btn btn-danger btn-sm " title="Print list PDF"><i
+                    class="fas fa-print"></i></button>
         </div>
-
     </div>
+
     <div class="d-flex justify-content-start ">
         <small>If the data is not complete, you can modify it by clicking on the right button, in the actions column.
             Order 0 corresponds to the Mayor, the others are the councilors of the municipality in order of registration in
             the JNE.</small>
-        <form action="{{ route('admin.candidates.printListPDF') }}" method="GET" target="_self">
-            <input type="hidden" name="district_id" value="{{ $district->id }}">
-            <input type="hidden" name="party_id" value="{{ $party->id }}">
-        </form>
+
         <!-- Checkbox Toggle -->
-        <button onclick="generarPDF()" class="btn btn-primary btn-sm ml-4 mr-4" title="Print list PDF"><i class="fas fa-print"></i></button>
 
     </div>
 @endsection
@@ -73,13 +71,12 @@
     </div>
     <!-- Modal para presentar el PDF -->
     <div class="modal fade" id="pdfModal" tabindex="-1" aria-labelledby="pdfModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="pdfModalLabel">Generated PDF</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
                 <div class="modal-body">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                     <iframe id="pdfViewer" style="width: 100%; height: 600px;" frameborder="0"></iframe>
                 </div>
             </div>
@@ -104,7 +101,8 @@
     <script>
         function generarPDF() {
             fetch(
-                    '{{ route('admin.candidates.printListPDF') }}?district_id={{ $district->id }}&party_id={{ $party->id }}')
+                    '{{ route('admin.candidates.printListPDF') }}?district_id={{ $district->id }}&party_id={{ $party->id }}'
+                )
                 .then(response => response.blob())
                 .then(blob => {
                     const url = URL.createObjectURL(blob);

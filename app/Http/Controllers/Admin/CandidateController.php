@@ -321,23 +321,34 @@ class CandidateController extends Controller
         foreach ($candidates as $candidate) {
             $voter_id = $candidate->voter_id;
             if ($voter_id == null) {
-                return back()->with('alert', [
-                    'icon' => 'error',
-                    'title' => 'Error!',
-                    'text' => 'Candidates without data, please check!!.',
-                ]);
+                //retornar pdf en blanco con mensaje de error
+                $pdf = new Fpdf();
+                $pdf->AddPage();
+                $pdf->SetFont('Arial', 'B', 16);
+                $pdf->Cell(0, 10, 'Error: Incomplete candidate data',0,1, 'C');
+                $pdf->Ln(10);
+                $pdf->SetFont('Arial', '', 12);
+                $pdf->MultiCell(0, 10, 'There are candidates with incomplete data (missing voter information). Please ensure all candidates have complete voter details before generating the PDF.', 0, 'C');
+                //Crear archivo candidates_error.pdf en storage/app/public y retornar la ruta
+                $outputPath = storage_path('app/public/candidates_error.pdf');
+                $pdf->Output('F', $outputPath);
+                return response()->download($outputPath, 'candidates_error_' . $party->code . '_' . $district->code . '.pdf'); 
             }
         }
 
         // Crear el PDF
         $pdf = new Fpdf();
+        $pdf->AliasNbPages(); // <-- IMPORTANTE
+
         $pdf->AddPage();
         //Logo del partido en la esquina superior izquierda
         // Encabezado, título y tabla de candidatos
         $rutaImg = public_path('storage\\' . str_replace('/', '\\', $party->logo_path));
-        if (file_exists($rutaImg)) {
-            $pdf->Image($rutaImg, 10, 10, 18);
+        //Verificar si el archivo existe y si es una imagen
+        if (file_exists($rutaImg) && getimagesize($rutaImg)) {
+            $pdf->Image($rutaImg, 10, 10, 30); // Ajusta la posición y el tamaño según sea necesario
         }
+        
 
         $pdf->Ln(0);
         $pdf->SetFont('Arial', 'B', 16);
@@ -359,10 +370,7 @@ class CandidateController extends Controller
             $pdf->Cell(60, 10, $voter ? $voter->surname : '', 1);
             $pdf->Ln();
         }
-        // Pie de página
-        $pdf->Ln(10);
-        $pdf->SetFont('Arial', 'I', 8);
-        $pdf->Cell(0, 10, 'Generated on ' . date('d-m-Y H:i:s'), 0, 0, 'R');
+        
         //Crear archivo candidates.pdf en storage/app/public y retornar la ruta
         $outputPath = storage_path('app/public/candidates.pdf');
         $pdf->Output('F', $outputPath);

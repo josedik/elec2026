@@ -137,5 +137,6 @@ return [
     */ 
     'blank' => env('BLANK_VOTES_CODE', '9998'),
     'invalid' => env('INVALID_VOTES_CODE', '9999'),
+    'name_cia' => env('NAME_CIA', 'Stereo 92 - Huacho'),
 
 ];
