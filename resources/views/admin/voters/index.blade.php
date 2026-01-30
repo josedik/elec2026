@@ -3,9 +3,9 @@
 @section('title', 'Voters')
 
 @section('content_header')
-    <div class="d-flex justify-content-between">
+    <div class="d-flex justify-content-between alert alert-info">
         <div>
-            <h3>Voters</h3>
+            <h4>Voter list</h4>
             <small></small>
         </div>
         <div>
@@ -25,9 +25,11 @@
                         <th>DNI</th>
                         <th>Name</th>
                         <th>Surname</th>
+                        <th>Birthdate</th>
                         <th>Active</th>
+                        <th>Station</th>
                         @can('admin.voters.create')
-                        <th>Actions</th>
+                            <th>Actions</th>
                         @endcan
                     </tr>
                 </thead>
@@ -71,8 +73,22 @@
                         name: 'surname'
                     },
                     {
+                        data: 'date_of_birth',
+                        name: 'date_of_birth'
+                    },
+                    {
                         data: 'active',
-                        name: 'active'
+                        render: function(data, type, row) {
+                            if (data == 1) {
+                                return '<span class="badge bg-success"><i class="fa fa-check"></i></span>';
+                            } else {
+                                return '<span class="badge bg-danger"><i class="fa fa-times"></i></span>';
+                            }
+                        }
+                    },
+                    {
+                        data: 'mesa_id',
+                        name: 'mesa_id'
                     },
                     @can('admin.voters.create')
                         {
@@ -116,7 +132,8 @@
                         },
                         error: function(xhr) {
                             let msg = 'Error deleting';
-                            if (xhr.responseJSON && xhr.responseJSON.message) msg = xhr
+                            if (xhr.responseJSON && xhr.responseJSON.message) msg =
+                                xhr
                                 .responseJSON.message;
                             Swal.fire({
                                 icon: 'error',

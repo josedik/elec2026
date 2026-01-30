@@ -366,8 +366,8 @@ class CandidateController extends Controller
             $voter = Voter::find($candidate->voter_id);
             $pdf->Cell(20, 10, $candidate->order==0 ? 'Mayor   ': $candidate->order, 1,0,'R');
             $pdf->Cell(30, 10, $voter ? $voter->dni : '', 1);
-            $pdf->Cell(60, 10, $voter ? $voter->name : '', 1);
-            $pdf->Cell(60, 10, $voter ? $voter->surname : '', 1);
+            $pdf->Cell(60, 10, $voter ? iconv('UTF-8', 'windows-1252', $voter->name) : '', 1);
+            $pdf->Cell(60, 10, $voter ? iconv('UTF-8','windows-1252',$voter->surname) : '', 1);
             $pdf->Ln();
         }
         

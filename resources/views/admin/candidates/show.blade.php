@@ -3,7 +3,7 @@
 @section('title', 'Candidates')
 
 @section('content_header')
-    <div class="d-flex justify-content-between">
+    <div class="d-flex justify-content-between alert alert-info">
         <div>
             <h1>Candidates from {{ $district->name }}</h1>
         </div>
@@ -19,9 +19,12 @@
 
 @section('content')
     <div class="card">
+        <div class="card-header">
+
+        </div>
         <div class="card-body">
             @php
-                $heads = ['Party', ['label' => 'Actions', 'no-export' => true, 'width' => 14]];
+                $heads = ['Party', 'Logo', ['label' => 'Actions', 'no-export' => true, 'width' => 14]];
 
                 $btnCreate = '<button class="btn btn-xs btn-default text-primary mx-1 shadow" title="Create list" type="submit">
                     <i class="fa fa-user-plus" aria-hidden="true"></i>
@@ -40,7 +43,7 @@
             @endphp
 
             {{-- Minimal example / fill data using the component slot --}}
-            <x-adminlte-datatable id="table" :heads="$heads" head-theme="light" theme="" :config="$config" striped
+            <x-adminlte-datatable id="table" :heads="$heads" head-theme="dark" theme="" :config="$config" striped
                 hoverable with-buttons>
                 @if ($parties->count() > 0)
 
@@ -48,6 +51,8 @@
                     @foreach ($parties as $party)
                         <tr>
                             <td>{{ $party->name }}</td>
+                            <td><img src="{{ asset('storage/' . $party->logo_path) }}" alt="logo_path"
+                                    class="h-6 flex-shrink-0" width="24px"></td>
                             <td>
                                 <form method="GET" action="{{ route('admin.candidates.edit', $party) }}"
                                     style="display: inline;">
@@ -60,7 +65,8 @@
                     @endforeach
                 @else
                     <tr>
-                        <td colspan="2" class="text-center text-danger">No matches are currently registered. Please register matches beforehand.</td>
+                        <td colspan="2" class="text-center text-danger">No matches are currently registered. Please
+                            register matches beforehand.</td>
                     </tr>
                 @endif
             </x-adminlte-datatable>
