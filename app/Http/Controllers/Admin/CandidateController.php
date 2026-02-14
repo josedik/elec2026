@@ -346,7 +346,7 @@ class CandidateController extends Controller
         $rutaImg = public_path('storage\\' . str_replace('/', '\\', $party->logo_path));
         //Verificar si el archivo existe y si es una imagen
         if (file_exists($rutaImg) && getimagesize($rutaImg)) {
-            $pdf->Image($rutaImg, 10, 10, 30); // Ajusta la posición y el tamaño según sea necesario
+            $pdf->Image($rutaImg, 10, 10,24); // Ajusta la posición y el tamaño según sea necesario
         }
         
 

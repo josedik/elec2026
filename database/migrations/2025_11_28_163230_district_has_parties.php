@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('district_id')->constrained('districts')->onDelete('cascade');
             $table->foreignId('party_id')->constrained('parties')->onDelete('cascade');
-            $table->unsignedBigInteger('votes')->default(0);
+            $table->unsignedBigInteger('governors')->default(0);
             $table->timestamps();
 
             $table->unique(['district_id', 'party_id']);

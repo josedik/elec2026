@@ -38,7 +38,7 @@ class District extends Model
     public function parties()
     {
         return $this->belongsToMany(Party::class, 'district_has_parties')
-                    ->withPivot('votes')
+                    ->withPivot('governors')
                     ->withTimestamps();
     }
     

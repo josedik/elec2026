@@ -6,8 +6,7 @@ use App\Models\Mesa;
 use Illuminate\Routing\Controller;
 use App\Models\Voter;
 use Illuminate\Http\Request;
-use Yajra\DataTables\Facades\DataTables;
-
+use Illuminate\Support\Facades\Storage;
 
 class VoterController extends Controller
 {
@@ -48,11 +47,20 @@ class VoterController extends Controller
             'date_of_birth' => 'required|date',
             'mesa_id' => 'required|exists:mesas,id',
             'active' => 'sometimes|boolean',
+            'photo' => 'required|image|max:2048',
         ]);
-
-        //$validated['active'] = $request->has('active') ? 1 : 0;
+        $lo = $request->file('photo');
+        if ($lo) {
+            
+            $filename = $request->input('dni').'.'.$lo->getClientOriginalExtension();
+            $photo_path = $lo->storeAs('photos', $filename); // Guarda la imagen en storage/app/public/photos
+        } else {
+            $photo_path = 'photos/generic.png';
+        }
 
         Voter::create($validated);
+        Voter::update(['photo_path' => $filename]);
+
 
         return redirect()->route('admin.voters.index')->with('success', 'Voter created successfully.');
     }
@@ -91,12 +99,20 @@ class VoterController extends Controller
             'date_of_birth' => 'required|date',
             'mesa_id' => 'required|exists:mesas,id',
             'active' => 'sometimes|boolean',
+            'photo' => 'required|image|max:2048',
+
         ]);
 
-        //$validated['active'] = $request->has('active') ? 1 : 0;
-
+        $lo = $request->file('photo');
+        if ($lo) {
+            $filename = $request->input('dni').'.'.$lo->getClientOriginalExtension();
+            $photo_path = $lo->storeAs('photos', $filename); // Guarda la imagen en storage/app/public/photos
+        } else {
+            $photo_path = 'photos/generic.png';
+        }
 
         $voter->update($validated);
+        $voter->update(['photo_path' => $filename]);
 
         return redirect()->route('admin.voters.index')->with('success', 'Voter updated successfully.');
     }
@@ -107,7 +123,7 @@ class VoterController extends Controller
     public function destroy(Request $request, $id)
     {
         //Se elimina a solicitud ajax desde la vista
-        
+
         if ($request->ajax()) {
             try {
                 $voter = Voter::find($id);
@@ -125,12 +141,12 @@ class VoterController extends Controller
     {
         if ($request->ajax()) {
             $data = Voter::select('*');
-            
+
             return datatables()->of(Voter::query())
                 ->addIndexColumn()
-                ->addColumn('action',function($row){
-                    $btn = '<a href="/admin/voters/'.$row->id.'/edit" class="btn btn-primary btn-sm" title="Edit voter"><i class="fa fa-pen"></i></a>'.
-                    '<button title="Delete voter with DNI '.$row->dni.'"  class="btn btn-danger btn-sm ml-1" id="btn-'.$row->id.'"><i class="fa fa-trash"></i></button>';
+                ->addColumn('action', function ($row) {
+                    $btn = '<a href="/admin/voters/' . $row->id . '/edit" class="btn btn-primary btn-sm" title="Edit voter"><i class="fa fa-pen"></i></a>' .
+                        '<button title="Delete voter with DNI ' . $row->dni . '"  class="btn btn-danger btn-sm ml-1" id="btn-' . $row->id . '"><i class="fa fa-trash"></i></button>';
                     return $btn;
                 })
                 ->rawColumns(['action'])
@@ -140,5 +156,5 @@ class VoterController extends Controller
         abort(404, 'This page is currently invalid, please try again later.');
 
     }
-// ...existing code...
+    // ...existing code...
 }

@@ -32,5 +32,8 @@ class Candidate extends Model
         return $this->belongsTo(Party::class);
     }
 
+    //Mostrar la foto del voter
+    
+
     
 }

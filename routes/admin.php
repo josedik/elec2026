@@ -20,11 +20,11 @@ use App\Http\Controllers\Schooltmp;
 use Illuminate\Support\Facades\Route;
 
 Route::get('', action: [HomeController::class, 'index']);
-Route::get('dist', action: [Schooltmp::class, 'voters']);
+//Route::get('dist', action: [Schooltmp::class, 'voters']);
 //Route::get('districts/show', action: [DistrictController::class, 'show'])->name('admin.districts.show');
 Route::get('mesas/getMesas', action: [MesaController::class, 'getMesas'])->name('mesas.getMesas');
 
-
+//Route::post('reports/pdf', [ReportsController::class, 'pdf'])->name('reports.pdf');
 // route para buscar el nombre y apellido del votante por dni
 Route::get('/search-name', [CandidateController::class, 'searchName'])->name('candidates.searchName');
 
@@ -53,10 +53,6 @@ Route::resource('roles', RoleController::class);
 Route::resource('permissions', PermissionController::class);
 Route::resource('users', AsignarController::class);
 Route::resource('reports', ReportsController::class);
-
-Route::get('/products', [ProductController::class, 'index'])->name('home');
-
-Route::post('/get-products', [ProductController::class, 'getProducts'])->name('products.getProducts');
 
 // Route para obtener la lista de votantes en formato JSON
 Route::get('/get-voters', [VoterController::class, 'getVoters'])->name('voters.getVoters');

@@ -8,11 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class districts_has_parties extends Model
 {
         use HasFactory;
-        protected $table = 'districts_has_parties';
+        protected $table = 'district_has_parties';
         protected $fillable = [
             'district_id',
             'party_id',
-            'votes',
+            'governors',
         ];
 
         public function voters()

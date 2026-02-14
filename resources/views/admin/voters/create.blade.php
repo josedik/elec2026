@@ -12,9 +12,9 @@
 @section('content')
     <div class="card">
         <div class="card-body">
-            <form action="{{ route('admin.voters.store') }}" method="POST">
+            <form action="{{ route('admin.voters.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
-
+                <input type="hidden" name="photo_path" type="text">
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group">
@@ -72,9 +72,9 @@
                                 class="form-control @error('mesa_id') is-invalid @enderror">
                                 <option value="">Select mesa</option>
                                 @foreach ($mesas ?? [] as $mesa)
-                                    <option value="{{ $mesa->id }}"
-                                        {{ old('mesa_id') == $mesa->id ? 'selected' : '' }}>
-                                        {{ $mesa->code ?? "Mesa #{$mesa->code}" }}
+                                    <option value="{{ $mesa['id'] }}"
+                                        {{ old('mesa_id') == $mesa['id'] ? 'selected' : '' }}>
+                                        {{ $mesa['code'] ?? "Mesa #{$mesa['code']}" }}
                                     </option>
                                 @endforeach
                             </select>
@@ -91,10 +91,24 @@
                         <label class="form-check-label" for="active"><strong>Active</strong></label>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="photo">Photo</label>
+                            <input id="photo" name="photo" type="file"
+                                class="form-control @error('photo') is-invalid @enderror" value="{{ old('photo') }}"
+                                accept="image" required>
+                            @error('photo')
+                                <span class="text-danger small">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
                 <div class="d-flex justify-content-between">
-                    <a href="{{ route('admin.voters.index') }}" class="btn btn-secondary">Cancel</a>
                     <button type="submit" class="btn btn-primary">Create Voter</button>
-                    <div></div>
+                    <div>
+                        <a href="{{ route('admin.voters.index') }}" class="btn btn-secondary">Cancel</a>
+                    </div>
                     <div></div>
                 </div>
             </form>

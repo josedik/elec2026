@@ -37,7 +37,7 @@
 
             {{-- Minimal example / fill data using the component slot --}}
             <x-adminlte-datatable id="table1" :heads="$heads" head-theme="dark" :config="$config" striped hoverable
-                bordered compressed with-buttons>
+                bordered compressed >
                 @foreach ($districts as $district)
                     <tr>
                         <td>{{ $district->code }}</td>
@@ -51,10 +51,6 @@
                                 <a href="{{ route('admin.reports.show', $district->id) }}"
                                     class="btn btn-xs btn-default text-primary mx-1 shadow" title="View Results">
                                     <i class="fa fa-lg fa-fw fa-eye"></i>
-                                </a>
-                                <a href="{{ route('admin.reports.edit', $district->id) }}"
-                                    class="btn btn-xs btn-default text-info mx-1 shadow" title="View Governors">
-                                    <i class="fa fa-lg fa-fw fa-thumbs-up" aria-hidden="true"></i>
                                 </a>
                             @endcan
                         </td>

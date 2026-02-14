@@ -12,7 +12,7 @@
 
 
 @section('content')
-    <form action="{{ route('admin.voters.update', $voter) }}" method="POST">
+    <form action="{{ route('admin.voters.update', $voter) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
@@ -84,6 +84,19 @@
                                     <small class="text-danger">{{ $message }}</small>
                                 @enderror
                             </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="photo">Photo</label>
+                            <input id="photo" name="photo" type="file"
+                                class="form-control @error('photo') is-invalid @enderror" value="{{ old('photo', $voter->potho_path ?? '') }}"
+                                accept="image" required>
+                            @error('photo')
+                                <span class="text-danger small">{{ $message }}</span>
+                            @enderror
                         </div>
                     </div>
                 </div>

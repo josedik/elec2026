@@ -18,6 +18,7 @@ class Voter extends Model
         'date_of_birth',
         'mesa_id',
         'active',
+        'photo_path'
     ];
 
     protected function name(): Attribute
@@ -51,24 +52,30 @@ class Voter extends Model
     {
         return $this->hasOne(Candidate::class);
     }
-
-    //Relacionar con votes
-    public function votes()
-    {
-        return $this->hasMany(Voter::class);
-    }
-
     //Relacionar con users
     public function user()
     {
         return $this->hasOne(User::class);
     }
+    //Relacionar con photo_path
+    public function photo_path(){
+        return $this->photo_path;
+    }
+    
 
     //Buscar por dni
     public static function searchByDni($dni)
     {
         return self::where('dni', $dni)->first();
     }
-   
 
+    //Para obtener la photo del voter
+    public function getPhotoUrlAttribute()
+    {
+        if ($this->photo_path) {
+            return asset('storage/' . $this->photo_path);
+        } else {
+            return asset('photos/generic.jpg');
+        }
+    }
 }

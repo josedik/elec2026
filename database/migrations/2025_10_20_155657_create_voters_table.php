@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('dni')->unique();
             $table->date('date_of_birth');
             $table->foreignId('mesa_id')->constrained()->onDelete('cascade');
+            $table->string('photo_path',255)->nullable;
             $table->boolean('active')->default(1);
             $table->timestamps();
 
@@ -29,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('electors');
+        Schema::dropIfExists('voters');
     }
 };

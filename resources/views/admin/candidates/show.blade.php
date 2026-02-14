@@ -5,7 +5,9 @@
 @section('content_header')
     <div class="d-flex justify-content-between alert alert-info">
         <div>
-            <h1>Candidates from {{ $district->name }}</h1>
+        <h1>List of political parties registered for: {{ $district->name }}</h1>
+        <small>Clicking the icon below Actions allows you to view or register candidates from the chosen party.</small>
+
         </div>
         <div>
             <a href="{{ route('admin.candidates.index') }}" class="btn btn-sm btn-secondary" title="Return to Previous Page">
@@ -19,9 +21,6 @@
 
 @section('content')
     <div class="card">
-        <div class="card-header">
-
-        </div>
         <div class="card-body">
             @php
                 $heads = ['Party', 'Logo', ['label' => 'Actions', 'no-export' => true, 'width' => 14]];

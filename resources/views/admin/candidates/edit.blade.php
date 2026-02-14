@@ -62,6 +62,13 @@
                                     class="btn btn-info btn-sm" title="Edit">
                                     <i class="fas fa-edit"></i>
                                 </a>
+                                <!-- Botón para abrir el modal -->
+                                <button class="btn btn-primary btn-sm" title="Show photo" data-toggle="modal"
+                                    data-target="#imageModal"
+                                    data-ruta="{{ asset('storage/photos/' . $candidate['dni']) }}"
+                                    data-nombre="{{ $candidate['name'] }}">
+                                    <i class="fa fa-camera"></i>
+                                </button>
                             </td>
                         </tr>
                     @endforeach
@@ -82,6 +89,24 @@
             </div>
         </div>
     </div>
+    <!-- Modal para foto-->
+
+    <div class="modal fade" id="imageModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalImageName"></h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body text-center">
+                    <img src="" id="modalImageSource" class="img-fluid" alt="Photo">
+                </div>
+            </div>
+
+        </div>
+    </div>
+    </div>
+
 @stop
 
 @section('plugins.Datatables', true)
@@ -110,5 +135,17 @@
                     $('#pdfModal').modal('show');
                 });
         }
+    </script>
+
+    <script>
+        $('#imageModal').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget); // Botón que activó el modal
+            var ruta = button.data('ruta'); // Extraer info de atributos data-*
+            var nombre = button.data('nombre');
+
+            var modal = $(this);
+            modal.find('.modal-title').text(nombre);
+            modal.find('#modalImageSource').attr('src', ruta);
+        });
     </script>
 @endsection

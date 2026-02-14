@@ -3,19 +3,21 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Candidate;
 use App\Models\District;
 use App\Models\districts_has_parties;
 use App\Models\Mesa;
 use App\Models\Mesa_has_parties;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rules\In;
-use Ramsey\Uuid\Type\Integer;
-use function Livewire\str;
+use Codedge\Fpdf\Fpdf\Fpdf;
+
+use function PHPUnit\Framework\isEmpty;
 
 class ReportsController extends Controller
 {
+
+
     /**
      * Display a listing of the resource.
      */
@@ -56,6 +58,7 @@ class ReportsController extends Controller
                     'text' => 'The district was not found!.',
                 ]);
         }
+        $totalVotes = 0;
         $prefijo = substr($district->code, 0, 4);
         $sufijo = substr($district->code, -2);
         $provincia = ($sufijo == '01') ? 1 : 0;
@@ -84,9 +87,16 @@ class ReportsController extends Controller
             $seatAllocation = $this->dhondt($votes, $district->escanios);
             foreach ($results as $result) {
                 $result->allocated_seats = $seatAllocation[$result->party_id] ?? 0;
+                //Actualizar governors en districts_has_parties
+                districts_has_parties::updateOrCreate(
+                    ['district_id' => $district->id, 'party_id' => $result->party_id],
+                    ['governors' => $result->allocated_seats]
+                );
             }
+            $pdfBase64 = $this->pdf($results, $district);
 
-            return view('admin.reports.show', compact('district', 'results', 'provincia', 'totalVotes'));
+
+            return view('admin.reports.show', compact('district', 'results', 'provincia', 'totalVotes', 'pdfBase64'));
 
 
         } else {
@@ -118,7 +128,13 @@ class ReportsController extends Controller
             foreach ($results as $result) {
                 $result->allocated_seats = $seatAllocation[$result->party_id] ?? 0;
             }
-            return view('admin.reports.show', compact('district', 'results', 'provincia', 'totalVotes'));
+            //Crear archivo pdf, en forma de tabla, head: order,party,logo,Votes,Gobernors,%, en carpeta: public/storage/. Para visualizarlo en la view mediante un modal.
+
+            $pdfBase64 = $this->pdf($results, $district);
+
+
+
+            return view('admin.reports.show', compact('district', 'results', 'provincia', 'totalVotes', 'pdfBase64'));
         }
     }
 
@@ -127,7 +143,48 @@ class ReportsController extends Controller
      */
     public function edit(string $id)
     {
-        
+        $district = District::findOrFail($id);
+        $district_id = $district->id;
+        $mensaje = " ";
+
+        //Seleccionar de districts_has_parties governors > 0, ordenados dsc
+        //con ellos se formará la lista de candidatos electos.
+        $dhps = districts_has_parties::where('district_id', $district->id)
+            ->where('governors', '>', 0)
+            ->orderBy('governors', 'desc')
+            ->get();
+        $lista = [];
+        $cuantos = 0;
+        //seleccionar de tabla candidates
+        foreach ($dhps as $key => $dhp) {
+            # code...
+            $candidates = Candidate::where('district_id', $district->id)
+                ->where('party_id', $dhp->party_id)
+                ->where('order', '<=', $dhp->governors)
+                ->get();
+            foreach ($candidates as $candidate) {
+                if (empty($lista)) {
+                    $lista[] = $candidate;
+                    $cuantos++;
+                } else {
+                    if ($candidate->order > 0) {
+                        $lista[] = $candidate;
+                        $cuantos++;
+                    }
+                }
+            }
+        }
+        if ($cuantos != $district->escanios + 1) {
+            $mensaje = "List incomplete or does not exist, please verify!!";
+        }
+        //Crear pdf concejo
+        $this->concejoPDF($lista, $district);
+
+
+        return view('admin.reports.edit', compact('lista', 'district', 'mensaje'));
+
+
+
     }
 
 
@@ -181,5 +238,210 @@ class ReportsController extends Controller
         return $seatCount;
     }
 
+    public function pdf($results, District $district)
+    {
+        $blankVotes = $this->blankVotes($results) ?? 0;
+        $invalidVotes = $this->invalidVotes($results) ?? 0;
+        $totalVotes = $this->totalVotes($results) ?? 0;
+        $validVotes = $totalVotes - $blankVotes - $invalidVotes;
 
+        $pdf = new Fpdf();
+        $pdf->AliasNbPages(); // <-- IMPORTANTE
+
+        $pdf->AddPage();
+        $h = 12;  //height cell
+        $rutaImg = public_path('storage\\' . str_replace('/', '\\', 'images/logoStereo.png'));
+        //Verificar si el archivo existe y si es una imagen
+        if (file_exists($rutaImg) && getimagesize($rutaImg)) {
+            $pdf->Image($rutaImg, 10, 10, 24); // Ajusta la posición y el tamaño según sea necesario
+        }
+
+
+        $pdf->Ln(0);
+        $pdf->SetFont('Arial', 'B', 16);
+        $pdf->Cell(0, 10, 'Final results', 0, 1, 'C');
+        $pdf->cell(0, 10, $district->name, 0, 0, 'C');
+        $pdf->SetFont('Arial', 'B', 10);
+        $pdf->cell(0, 10, date('H:i:s'), 0, 1, 'C');
+        $pdf->Ln(10);
+
+        $pdf->SetFont('Arial', 'B', 10);
+        $pdf->SetFillColor(200, 200, 200);
+        $pdf->Cell(10, $h, '#', 1, 0, 'C', true);
+        $pdf->Cell(100, $h, 'Party', 1, 0, 'C', true);
+        $pdf->Cell(20, $h, 'Logo', 1, 0, 'C', true);
+        $pdf->Cell(20, $h, 'Votes', 1, 0, 'C', true);
+        $pdf->Cell(20, $h, 'Governors', 1, 0, 'C', true);
+        $pdf->Cell(20, $h, 'Percent', 1, 1, 'C', true); // 1,1 significa salto de línea
+        $pdf->SetFont('Arial', '', 10);
+        $pdf->SetFillColor(255, 255, 255);
+
+        $order = 1;
+        foreach ($results as $result) {
+            if ($result->party->code == env('INVALID_VOTES_CODE') || $result->party->code == env('BLANK_VOTES_CODE')) {
+                # code..
+                continue;
+            }
+            if ($result->allocated_seats > 0) {
+                # code...
+                $pdf->SetFillColor(193, 229, 252);
+            } else {
+                $pdf->SetFillColor(255, 255, 255);
+            }
+            $pdf->Cell(10, $h, $order++, 1, 0, 'R', true);
+            $pdf->Cell(100, $h, iconv('UTF-8', 'windows-1252', $result->party->name), 1, 0, 'L', true);
+            $x = $pdf->GetX();
+            $y = $pdf->GetY();
+            // Dibujar un borde de celda (opcional)
+            $pdf->Cell(20, $h, '', 1, 0, 'C', true);
+            // Insertar la imagen en la posición de la celda
+            //$pdf->Image( asset('storage/' . $result->party->logo_path), x, y, ancho, alto);
+            $pdf->Image(asset('storage/' . $result->party->logo_path), $x + 6, $y + 2, $h - 4, $h - 4);
+            // Mover el cursor a la siguiente celda
+            $pdf->SetX($x + 20);
+
+            $pdf->Cell(20, $h, $result->total, 1, 0, 'R', true);
+            $pdf->Cell(20, $h, $result->allocated_seats, 1, 0, 'C', true);
+            $percent = number_format($result->total * 100 / $validVotes, 3, '.', ',');
+            $pdf->Cell(20, $h, $percent, 1, 1, 'C', true); // 1,1 significa salto de línea
+        }
+        foreach ($results as $result) {
+            if ($result->party->code == env('INVALID_VOTES_CODE') || $result->party->code == env('BLANK_VOTES_CODE')) {
+                # code..
+                if ($result->allocated_seats > 0) {
+                    # code...
+                    $pdf->SetFillColor(193, 229, 252);
+                } else {
+                    $pdf->SetFillColor(255, 255, 255);
+                }
+                $pdf->Cell(10, $h, $order++, 1, 0, 'R', true);
+                $pdf->Cell(100, $h, iconv('UTF-8', 'windows-1252', $result->party->name), 1, 0, 'L', true);
+                $pdf->Cell(20, $h, $result->total, 1, 0, 'R', true);
+                $pdf->Cell(20, $h, '', 1, 0, 'R', true);
+                $pdf->Cell(20, $h, '', 1, 0, 'C', true);
+                $percent = number_format($result->total * 100 / $totalVotes, 3, '.', ',');
+                $pdf->Cell(20, $h, $percent, 1, 1, 'C', true); // 1,1 significa salto de línea
+            }
+        }
+        $pdf->SetFont('Arial', 'B', 10);
+        $pdf->SetFillColor(200, 200, 200);
+
+        $pdf->Cell(10, $h, '', 1, 0, 'L', true);
+        $pdf->Cell(100, $h, 'Totales', 1, 0, 'L', true);
+        $pdf->Cell(20, $h, $totalVotes, 1, 0, 'R', true);
+        $pdf->Cell(20, $h, $validVotes, 1, 0, 'R', true);
+        $pdf->Cell(20, $h, $district->escanios, 1, 0, 'R', true);
+        $pdf->Cell(20, $h, 100, 1, 1, 'C', true); // 1,1 significa salto de línea
+
+        $outputPath = storage_path('app/public/lista.pdf');
+        $pdf->Output('F', $outputPath);
+        return response()->download($outputPath, 'lista_' . $district->code . '.pdf');
+    }
+
+    private function blankVotes($results)
+    {
+        $blank = 0;
+        foreach ($results as $result) {
+            # code...
+            if ($result->party->code == env('BLANK_VOTES_CODE')) {
+                $blank += $result->total;
+            }
+        }
+        return $blank;
+
+    }
+
+    private function invalidVotes($results)
+    {
+        $invalid = 0;
+        foreach ($results as $result) {
+            # code...
+            if ($result->party->code == env('INVALID_VOTES_CODE')) {
+                $invalid += $result->total;
+            }
+        }
+        return $invalid;
+    }
+
+    private function totalVotes($results)
+    {
+        $total = 0;
+        foreach ($results as $result) {
+            # code...
+            $total += $result->total;
+        }
+        return $total;
+    }
+
+    private function concejoPDF($lista, $district)
+    {
+        //Crear pdf con la lista de candidatos electos, en forma de tabla, con su foto y nombre debajo, en carpeta: public/storage/. Para visualizarlo en la view mediante un modal.
+
+        // 1. Obtener imágenes desde candidates->voter->photo_path, y almacenarlas en un array
+        $fotos = [];
+        $nombres = [];
+        foreach ($lista as $candidate) {
+            //Hacer una lista de fotos. Si el candidato no tiene foto, usar una imagen por defecto. La imagen está en candidates->voter->photo_path
+
+            $fotos[] = ($candidate->voter->photo_path=='') ? 'storage/photos/generic.jpg':'storage/photos/'.$candidate->voter->photo_path;
+            $nombres[] = $candidate->voter->name .' '.$candidate->voter->surname;
+        }
+            $pdf = new FPDF();
+            $pdf->AddPage();
+            $pdf->AliasNbPages(); // <-- IMPORTANTE
+            $pdf->SetFont('Arial', 'B', 12);
+            $pdf->Cell(0, 10, 'Elected Council '.$district->name, 0, 1, 'C');
+            $pdf->Ln(10);
+
+            // 2. Configuracion de la matriz
+            $anchoFoto = 40; // 4cm en mm
+            $altoFoto = 40;  // 4cm en mm
+            $columnas = 3;
+            $xInicial = 20;  // Margen izquierdo
+            $yInicial = 30;  // Margen superior
+            $espacio = 10;   // Espacio entre fotos
+
+            $i = 0;
+            foreach ($fotos as $foto) {
+                // Calcular posicion
+                $columna = $i % $columnas;
+                $fila = floor($i / $columnas);
+                $x = $xInicial + ($columna * ($anchoFoto + $espacio));
+                $y = $yInicial + ($fila * ($altoFoto + $espacio + 10)); // +10 para espacio de texto
+
+                // Insertar imagen
+                if (file_exists($foto)) {
+                    $pdf->Image($foto, $x, $y, $anchoFoto, $altoFoto);
+                }
+
+                // Añadir texto debajo (opcional)
+                $pdf->SetXY($x, $y + $altoFoto + 2);
+                $pdf->SetFont('Arial', 'B', 6);
+
+                $pdf->Cell($anchoFoto, 10, $nombres[$i], 0, 0, 'C');
+                $pdf->SetFont('Arial', 'B', 12);
+                
+                if ($fila == 0. && $columna == 0) {
+                    $pdf->Ln($altoFoto + $espacio + 10); 
+                }
+
+                $i++;
+            }
+            $outputPath = storage_path('app/public/concejo.pdf');
+            $pdf->Output('F', $outputPath);
+            return response()->download($outputPath, 'concejo_' . $district->code . '.pdf');
+
+        }
+
+
+
+    private function hayFoto($url)
+    {
+        if (file_exists($url)) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
 }
