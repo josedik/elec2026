@@ -58,6 +58,7 @@ class PartyController extends Controller
 
 
         $lo = $request->file('logo_path');
+        $filename = '';
         if ($lo) {
             $filename = $request->input('code') . '.' . $lo->getClientOriginalExtension();
             $path = $lo->storeAs('images', $filename); // Guarda la imagen en storage/app/public/images
@@ -71,7 +72,7 @@ class PartyController extends Controller
         //$data['logo_path'] = $url;
 
         $party = Party::create($data);
-        $party->logo_path = $path;
+        $party->logo_path = $filename;
         $party->save();
 
         return redirect()->route('admin.parties.index')->with('alert', [

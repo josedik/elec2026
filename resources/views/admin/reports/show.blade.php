@@ -96,7 +96,7 @@
                         <td class="text-right">{{ $order++ }}</td>
                         <td>{{ $total->party->name ?? '' }}</td>
                         <td>
-                            <img src="{{ asset('storage/' . $total->party->logo_path) }}" alt="logo_path"
+                            <img src="{{ asset('storage/images/' . $total->party->logo_path) }}" alt="logo_path"
                                 class="h-6 flex-shrink-0" width="36px">
 
                         </td>

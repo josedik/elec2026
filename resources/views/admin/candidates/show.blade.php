@@ -50,7 +50,7 @@
                     @foreach ($parties as $party)
                         <tr>
                             <td>{{ $party->name }}</td>
-                            <td><img src="{{ asset('storage/' . $party->logo_path) }}" alt="logo_path"
+                            <td><img src="{{ asset('storage/images/' . $party->logo_path) }}" alt="logo_path"
                                     class="h-6 flex-shrink-0" width="24px"></td>
                             <td>
                                 <form method="GET" action="{{ route('admin.candidates.edit', $party) }}"

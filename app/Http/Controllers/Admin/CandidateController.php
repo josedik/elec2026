@@ -343,7 +343,7 @@ class CandidateController extends Controller
         $pdf->AddPage();
         //Logo del partido en la esquina superior izquierda
         // Encabezado, título y tabla de candidatos
-        $rutaImg = public_path('storage\\' . str_replace('/', '\\', $party->logo_path));
+        $rutaImg = public_path('storage\\images\\' . str_replace('/', '\\', $party->logo_path));
         //Verificar si el archivo existe y si es una imagen
         if (file_exists($rutaImg) && getimagesize($rutaImg)) {
             $pdf->Image($rutaImg, 10, 10,24); // Ajusta la posición y el tamaño según sea necesario

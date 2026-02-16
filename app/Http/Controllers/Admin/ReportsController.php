@@ -296,7 +296,7 @@ class ReportsController extends Controller
             $pdf->Cell(20, $h, '', 1, 0, 'C', true);
             // Insertar la imagen en la posición de la celda
             //$pdf->Image( asset('storage/' . $result->party->logo_path), x, y, ancho, alto);
-            $pdf->Image(asset('storage/' . $result->party->logo_path), $x + 6, $y + 2, $h - 4, $h - 4);
+            $pdf->Image(asset('storage/images/' . $result->party->logo_path), $x + 6, $y + 2, $h - 4, $h - 4);
             // Mover el cursor a la siguiente celda
             $pdf->SetX($x + 20);
 
@@ -383,55 +383,57 @@ class ReportsController extends Controller
         foreach ($lista as $candidate) {
             //Hacer una lista de fotos. Si el candidato no tiene foto, usar una imagen por defecto. La imagen está en candidates->voter->photo_path
 
-            $fotos[] = ($candidate->voter->photo_path=='') ? 'storage/photos/generic.jpg':'storage/photos/'.$candidate->voter->photo_path;
-            $nombres[] = $candidate->voter->name .' '.$candidate->voter->surname;
+            $fotos[] = ($candidate->voter->photo_path == '') ? 'storage/photos/generic.jpg' : 'storage/photos/' . $candidate->voter->photo_path;
+            $nombres[] = $candidate->voter->name . ' ' . $candidate->voter->surname;
         }
-            $pdf = new FPDF();
-            $pdf->AddPage();
-            $pdf->AliasNbPages(); // <-- IMPORTANTE
-            $pdf->SetFont('Arial', 'B', 12);
-            $pdf->Cell(0, 10, 'Elected Council '.$district->name, 0, 1, 'C');
-            $pdf->Ln(10);
+        $pdf = new FPDF();
+        $pdf->AddPage();
+        $pdf->AliasNbPages(); // <-- IMPORTANTE
+        $pdf->SetFont('Arial', 'B', 12);
+        $pdf->Cell(0, 10, 'Elected Council ' . $district->name, 0, 1, 'C');
+        $pdf->Ln(10);
 
-            // 2. Configuracion de la matriz
-            $anchoFoto = 40; // 4cm en mm
-            $altoFoto = 40;  // 4cm en mm
-            $columnas = 3;
-            $xInicial = 20;  // Margen izquierdo
-            $yInicial = 30;  // Margen superior
-            $espacio = 10;   // Espacio entre fotos
+        // 2. Configuracion de la matriz
+        $anchoFoto = 44; // 4cm en mm
+        $altoFoto = 44;  // 4cm en mm
+        $columnas = 3;
+        $xInicial = 20;  // Margen izquierdo
+        $yInicial = 30;  // Margen superior
+        $espacio = 10;   // Espacio entre fotos
 
-            $i = 0;
-            foreach ($fotos as $foto) {
-                // Calcular posicion
-                $columna = $i % $columnas;
-                $fila = floor($i / $columnas);
-                $x = $xInicial + ($columna * ($anchoFoto + $espacio));
-                $y = $yInicial + ($fila * ($altoFoto + $espacio + 10)); // +10 para espacio de texto
+        $i = 0;
+        foreach ($fotos as $foto) {
+            // Calcular posicion
+            $columna = $i % $columnas;
+            $fila = floor($i / $columnas);
+            $x = $xInicial + ($columna * ($anchoFoto + $espacio));
+            $y = $yInicial + ($fila * ($altoFoto + $espacio + 10)); // +10 para espacio de texto
+            // Insertar imagen si existe, sino insertar una imagen por defecto 
+            $pdf->Rect($x, $y, $anchoFoto, $altoFoto); // Marco
 
-                // Insertar imagen
-                if (file_exists($foto)) {
-                    $pdf->Image($foto, $x, $y, $anchoFoto, $altoFoto);
-                }
-
-                // Añadir texto debajo (opcional)
-                $pdf->SetXY($x, $y + $altoFoto + 2);
-                $pdf->SetFont('Arial', 'B', 6);
-
-                $pdf->Cell($anchoFoto, 10, $nombres[$i], 0, 0, 'C');
-                $pdf->SetFont('Arial', 'B', 12);
-                
-                if ($fila == 0. && $columna == 0) {
-                    $pdf->Ln($altoFoto + $espacio + 10); 
-                }
-
-                $i++;
+            if (file_exists($foto)) {
+                $pdf->Image($foto, $x+2, $y+2, $anchoFoto-4, $altoFoto-4);
             }
-            $outputPath = storage_path('app/public/concejo.pdf');
-            $pdf->Output('F', $outputPath);
-            return response()->download($outputPath, 'concejo_' . $district->code . '.pdf');
 
+
+            // Añadir texto debajo (opcional)
+            $pdf->SetXY($x, $y + $altoFoto + 2);
+            $pdf->SetFont('Arial', 'B', 6);
+
+            $pdf->Cell($anchoFoto, 10, iconv('UTF-8', 'windows-1252', $nombres[$i]), 0, 0, 'C');
+            $pdf->SetFont('Arial', 'B', 12);
+
+            if ($fila == 0. && $columna == 0) {
+                $pdf->Ln($altoFoto + $espacio + 10);
+            }
+
+            $i++;
         }
+        $outputPath = storage_path('app/public/concejo.pdf');
+        $pdf->Output('F', $outputPath);
+        return response()->download($outputPath, 'concejo_' . $district->code . '.pdf');
+
+    }
 
 
 

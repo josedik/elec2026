@@ -7,7 +7,7 @@
         @php
             $id = $district->id;
         @endphp
-        <div><img src="{{ asset('storage/' . $party->logo_path) }}" alt="Party logo" class="h-6 flex-shrink-0 mr-2"
+        <div><img src="{{ asset('storage/images/' . $party->logo_path) }}" alt="Party logo" class="h-6 flex-shrink-0 mr-2"
                 width="36px">Political party: <strong>{{ $party->name }}</strong></div>
         <div>
             <h3>Candidates</h3>

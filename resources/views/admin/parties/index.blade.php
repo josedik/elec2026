@@ -56,7 +56,7 @@
                         <td>{{ $party->active ? 'Yes' : 'No' }}</td>
                         <td>{{ $party->voters ?? '' }}</td>
 
-                        <td><img src="{{ asset('storage/' . $party->logo_path) }}" alt="logo_path" class="h-6 flex-shrink-0" width="36px"></td>
+                        <td><img src="{{ asset('storage/images/' . $party->logo_path) }}" alt="logo_path" class="h-6 flex-shrink-0" width="36px"></td>
                         <td>
                             @can('admin.parties.edit')
                                 <a href="{{ route('admin.parties.edit', $party) }}">
