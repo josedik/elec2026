@@ -68,9 +68,8 @@ class AsignarController extends Controller
     public function update(Request $request, User $user)    {
 
         $user->roles()->sync($request->roles);
-        return "Es correcto?";
-
-        return redirect()->route('admin.users.edit', $user)->with('info', 'Roles updated successfully');
+        $users = User::all();
+        return view('admin.users.listUser', compact('users'))->with('info', 'Roles updated successfully');
     }
 
     /**

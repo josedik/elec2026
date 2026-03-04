@@ -47,7 +47,7 @@
                         <td class="text text-right">{{ $district->area }}</td>
                         <td class="text text-right">{{ $district->escanios }}</td>
                         <td align="center">
-                            @can('admin.reports.show')
+                            @can('admin.reports.index')
                                 <a href="{{ route('admin.reports.show', $district->id) }}"
                                     class="btn btn-xs btn-default text-primary mx-1 shadow" title="View Results">
                                     <i class="fa fa-lg fa-fw fa-eye"></i>

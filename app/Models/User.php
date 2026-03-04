@@ -90,6 +90,8 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function adminlte_profile_url(): string
     {
-        return route('profile.show');
+        // Here you can return the URL of your profile page (e.g. "/profile")
+       // return route('profile.show');
+         return route('profile.show', ['user' => Auth::user()->id]);
     }
 }

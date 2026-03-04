@@ -397,6 +397,7 @@ return [
             'text' => 'Sampling',
             'icon_color' => 'green',
             'route' => 'admin.muestreos.index',
+            'can' => 'admin.muestreos.index',
         ],
     ],
 
@@ -597,5 +598,5 @@ return [
     |
     */
 
-    'livewire' => false,
+    'livewire' => true,
 ];

@@ -12,13 +12,18 @@
             <button class="btn btn-secondary btn-sm ml-4" title="Back" onclick="window.history.back()"><i
                     class="fa fa-lg fa-fw fa-arrow-left"></i></button>
             @if ($totalVotes > 0)
-                <a href="{{ route('admin.reports.edit', $district->id) }}" class="btn btn-success btn-sm  mx-1" title="View Governors">
-                    <i class="fa fa-lg fa-fw fa-thumbs-up mt-2" aria-hidden="true"></i>
-                </a>
+                @can('admin.reports.edit')
+                    <a href="{{ route('admin.reports.edit', $district->id) }}" class="btn btn-success btn-sm  mx-1"
+                        title="View Governors">
+                        <i class="fa fa-lg fa-fw fa-thumbs-up mt-2" aria-hidden="true"></i>
+                    </a>
+                @endcan
                 <div>
-                <x-adminlte-button theme="danger" icon="fa fa-lg fa-fw fa-file" data-toggle="modal" title="Print pdf"
-                    data-target="#modalPurple" />
-            </div>
+                    @can('admin.reports.edit')
+                        <x-adminlte-button theme="danger" icon="fa fa-lg fa-fw fa-file" data-toggle="modal" title="Print pdf"
+                            data-target="#modalPurple" />
+                    @endcan
+                </div>
             @endif
 
         </div>
@@ -39,7 +44,7 @@
             <div>
                 <h4>Votes registered: {{ $totalVotes }}</h4>
             </div>
-            <div>{{ date('H:i:s')  }}</div>
+            <div>{{ date('H:i:s') }}</div>
 
         </div>
         <div class="card">
